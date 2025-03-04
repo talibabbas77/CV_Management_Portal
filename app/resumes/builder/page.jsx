@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MultiStepForm from "@/components/MultiStepForm";
 
@@ -39,7 +39,9 @@ const BuilderPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <MultiStepForm existingData={resumeData} onSave={handleSave} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <MultiStepForm existingData={resumeData} onSave={handleSave} />
+      </Suspense>
     </div>
   );
 };
