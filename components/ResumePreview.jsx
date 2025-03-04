@@ -1,37 +1,33 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import jsPDF from "jspdf";
 
 const ResumePreview = ({ formData }) => {
   const handleDownload = () => {
-    const data = `
-Resume Preview:
------------------------------
-Personal Details:
-  Name: ${formData.personal.name}
-  Email: ${formData.personal.email}
-  Contact: ${formData.personal.contact}
+    const doc = new jsPDF();
 
-Education:
-  School: ${formData.education.school}
-  Degree: ${formData.education.degree}
-  Graduation Year: ${formData.education.graduationYear}
+    doc.text("Resume Preview", 10, 10);
+    doc.text("-----------------------------", 10, 20);
+    doc.text("Personal Details:", 10, 30);
+    doc.text(`Name: ${formData.personal.name}`, 10, 40);
+    doc.text(`Email: ${formData.personal.email}`, 10, 50);
+    doc.text(`Contact: ${formData.personal.contact}`, 10, 60);
 
-Experience:
-  Company: ${formData.experience.company}
-  Role: ${formData.experience.role}
-  Duration: ${formData.experience.duration}
+    doc.text("Education:", 10, 70);
+    doc.text(`School: ${formData.education.school}`, 10, 80);
+    doc.text(`Degree: ${formData.education.degree}`, 10, 90);
+    doc.text(`Graduation Year: ${formData.education.graduationYear}`, 10, 100);
 
-Skills:
-  ${(formData.skills || []).join(", ")}
-    `;
-    const blob = new Blob([data], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${formData.personal.name || "resume"}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    doc.text("Experience:", 10, 110);
+    doc.text(`Company: ${formData.experience.company}`, 10, 120);
+    doc.text(`Role: ${formData.experience.role}`, 10, 130);
+    doc.text(`Duration: ${formData.experience.duration}`, 10, 140);
+
+    doc.text("Skills:", 10, 150);
+    doc.text((formData.skills || []).join(", "), 10, 160);
+
+    doc.save(`${formData.personal.name || "resume"}.pdf`);
   };
 
   return (

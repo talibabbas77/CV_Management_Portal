@@ -8,7 +8,6 @@ export async function GET(request) {
 
   const token = request.cookies.get("token")?.value;
   if (!token) {
-    console.error("No token found in cookies");
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
@@ -16,12 +15,10 @@ export async function GET(request) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
-      console.error("User not found");
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
     return NextResponse.json({ user }, { status: 200 });
   } catch (error) {
-    console.error("Error verifying token or fetching user:", error);
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 }

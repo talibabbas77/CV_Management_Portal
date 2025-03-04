@@ -1,46 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import toast from "react-hot-toast";
+import { useUser } from "@/context/UserContext";
 
 const Navbar = () => {
-  const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/authenticated")
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error("Not authenticated");
-      })
-      .then(() => {
-        setIsLoggedIn(true);
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-      });
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("/api/logout", {
-        method: "POST",
-      });
-      if (res.ok) {
-        setIsLoggedIn(false);
-        toast.success("Logged out successfully!");
-        router.push("/login");
-        router.refresh();
-      } else {
-        toast.error("Failed to logout");
-        router.push("/login");
-      }
-    } catch (error) {
-      toast.error("An error occurred");
-    }
-  };
+  const { user, logout } = useUser();
 
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
@@ -52,9 +16,9 @@ const Navbar = () => {
             </span>
           </Link>
           <div className="flex items-center space-x-6">
-            {isLoggedIn ? (
+            {user ? (
               <button
-                onClick={handleLogout}
+                onClick={logout}
                 className="flex items-center space-x-2 bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg transition duration-300"
               >
                 <FaSignOutAlt className="text-lg" />

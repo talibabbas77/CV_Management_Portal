@@ -15,7 +15,7 @@ export default function Home() {
     if (user) {
       setIsLoading(false);
     } else {
-      fetch("/api/authenticated")
+      fetch("/api/authenticated", { credentials: "include" })
         .then((res) => {
           if (res.ok) return res.json();
           throw new Error("Not authenticated");
@@ -29,6 +29,7 @@ export default function Home() {
     }
   }, [user]);
 
+  // Conditionally route for the Resume Builder
   const handleResumeBuilderClick = () => {
     if (user) {
       router.push("/resumes/builder");
@@ -47,7 +48,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-    
       <div className="absolute inset-0 opacity-10">
         <div
           className="absolute inset-0 bg-repeat bg-center"
@@ -70,7 +70,8 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 animate-slideUp">
-            <Link href="/profile">
+            {/* Conditionally set the link for Profile */}
+            <Link href={user ? "/profile" : "/login"}>
               <div className="group relative px-8 py-4 bg-blue-600 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-blue-500/25 hover:scale-105">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center space-x-2">

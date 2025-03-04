@@ -1,11 +1,10 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
-
+import { useUser } from "@/context/UserContext";
 const InputField = ({ icon: Icon, ...props }) => (
   <div className="relative mb-4">
     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -22,6 +21,7 @@ const InputField = ({ icon: Icon, ...props }) => (
 
 const Page = () => {
   const router = useRouter();
+  const { setUser } = useUser();
   const [form, setForm] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,6 +42,7 @@ const Page = () => {
 
       if (res.ok) {
         toast.success("Login successful!");
+        setUser(data.user);
         router.push("/profile");
       } else {
         toast.error(data.message || "Login failed");
@@ -56,10 +57,8 @@ const Page = () => {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="relative w-full max-w-md p-8 transform transition-all duration-300 hover:scale-[1.01]">
-        
         <div className="absolute inset-0 bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl"></div>
 
-        
         <div className="relative z-10 animate-fadeIn">
           <h2 className="text-3xl font-bold mb-6 text-center text-white">
             Welcome Back

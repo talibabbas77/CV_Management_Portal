@@ -5,25 +5,18 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   await dbConnect();
+
+  const token = request.cookies.get("token")?.value;
+  if (!token) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
+
   try {
-   
-    const token = request.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json(
-        { message: "Not authenticated" },
-        { status: 401 }
-      );
-    }
-
-
-    const resumes = await Resume.find().populate("user", "name");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const resumes = await Resume.find({ user: decoded.userId });
     return NextResponse.json(resumes, { status: 200 });
   } catch (error) {
-    console.error("Error in GET /api/resumes:", error);
-    return NextResponse.json(
-      { message: "Failed to fetch resumes" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 }
 
@@ -47,7 +40,6 @@ export async function POST(request) {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
 
-   
     body.user = decoded.userId;
 
     const resume = await Resume.create(body);
